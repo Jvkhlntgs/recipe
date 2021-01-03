@@ -13,7 +13,7 @@ export default class Search {
       this.result = result.data.recipes;
       return this.result;
     } catch (error) {
-      alert(`asuudal: ${error}`);
+      console.log(`asuudal: ${error}`);
     }
   }
 }
