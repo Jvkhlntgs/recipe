@@ -12,7 +12,7 @@ title: "Avocado Pita Pizza with Cilantro Sauce"
 
 //Private functionshuu
 const renderRecipe = (recipe) => {
-  console.log(recipe);
+  //   console.log(recipe);
   const markup = `
   <li>
                     <a class="results__link" href="#${recipe.recipe_id}">

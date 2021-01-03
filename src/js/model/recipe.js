@@ -26,4 +26,11 @@ export default class Recipe {
     this.image_url = result.data.recipe.image_url;
     this.ingredients = result.data.recipe.ingredients;
   }
+
+  calcTime() {
+    this.time = this.ingredients.length * 5;
+  }
+  calcHuniiToo() {
+    this.huniiToo = 4;
+  }
 }
