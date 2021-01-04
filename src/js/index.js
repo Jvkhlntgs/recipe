@@ -5,6 +5,8 @@ import * as searchView from "./view/searchView";
 import Recipe from "./model/recipe";
 import List from "./model/list";
 import * as listView from "./view/listView";
+import Like from "./model/like";
+import * as LikeView from "./view/likeView";
 import {
   renderRecipe,
   clearRecipe,
@@ -54,6 +56,7 @@ elements.pageButtons.addEventListener("click", (e) => {
 const controlRecipe = async () => {
   // 1. URL aas id salgaj avchirah
   const id = window.location.hash.replace("#", "");
+
   if (id) {
     // 2. Joriin model uusgeh
     state.recipe = new Recipe(id);
@@ -68,7 +71,7 @@ const controlRecipe = async () => {
     state.recipe.calcTime();
     state.recipe.calcHuniiToo();
     // 6. Joriig delgetsend gargana
-    renderRecipe(state.recipe);
+    renderRecipe(state.recipe, state.likes.isLiked(id));
   }
 };
 
@@ -78,6 +81,15 @@ const controlRecipe = async () => {
 ["hashchange", "load"].forEach((e) =>
   window.addEventListener(e, controlRecipe)
 );
+
+window.addEventListener("load", (e) => {
+  // Shineer like model app achaalagdahad uusgene
+  if (!state.likes) state.likes = new Like();
+  // Like tses gargah eseh shiideh
+  LikeView.toggleLikeMenu(state.likes.getNumberOfLikes());
+  // Likeuud baival tedgeeriig tsesen nemj haruulna
+  state.likes.likes.forEach((like) => LikeView.renderLike(like));
+});
 
 /**
  * Nairlaga controller
@@ -92,9 +104,41 @@ const controlList = () => {
   });
 };
 
+const controlLike = () => {
+  // 1. Like iin modeliig uusgene.
+  if (!state.likes) state.likes = new Like();
+  // 2. Odoo haragdaj baiga joriin ID olj avah
+  const currentRecipeID = state.recipe.id;
+  // 3. Ene joriig likelsan esehiig shalgah
+  if (state.likes.isLiked(currentRecipeID)) {
+    state.likes.deleteLike(currentRecipeID);
+    //like iin tsesnees ustgana
+    LikeView.deleteLike(currentRecipeID);
+    // b
+    LikeView.toggleLikeBtn(false);
+  } else {
+    // like nemeh
+
+    const newLike = state.likes.addLike(
+      currentRecipeID,
+      state.recipe.title,
+      state.recipe.publisher,
+      state.recipe.image_url
+    );
+    LikeView.renderLike(newLike);
+    LikeView.toggleLikeBtn(true);
+  }
+
+  LikeView.toggleLikeMenu(state.likes.getNumberOfLikes());
+  // 4. Likelsan bol like tovch darah uyd like boliulna.
+  // 5. likelagui bol likelna
+};
+
 elements.recipeDev.addEventListener("click", (e) => {
   if (e.target.matches(".recipe__btn, .recipe__btn * ")) {
     controlList();
+  } else if (e.target.matches(".recipe__love, .recipe__love *")) {
+    controlLike();
   }
 });
 
